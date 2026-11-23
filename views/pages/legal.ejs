@@ -1,0 +1,12 @@
+<%- include('../partials/head', { overHero: false }) %>
+<section class="section legal">
+  <div class="wrap wrap--narrow">
+    <p class="eyebrow anim" style="--d:0">The Billion</p>
+    <h1 class="display anim" style="--d:1"><%= t('legal.' + page.slug + '.title') %></h1>
+    <div class="prose anim" style="--d:2">
+      <% t('legal.' + page.slug + '.body').forEach(function(p){ %><p><%= p %></p><% }) %>
+      <p><a class="btn btn--line btn--sm" href="<%= url('/contact') %>"><%= t('nav.contact') %></a></p>
+    </div>
+  </div>
+</section>
+<%- include('../partials/foot') %>

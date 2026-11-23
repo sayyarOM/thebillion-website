@@ -1,0 +1,9 @@
+<section class="phero" data-hero>
+  <div class="phero__media"><img src="/img/<%= heroImg %>.webp" alt="" fetchpriority="high" data-parallax="0.15"></div>
+  <div class="wrap phero__inner">
+    <p class="eyebrow eyebrow--light anim" style="--d:0" <%= heroEyebrowLang ? 'lang=' + heroEyebrowLang : '' %>><%= heroEyebrow %></p>
+    <h1 class="display anim" style="--d:1"><%= heroTitle %></h1>
+    <p class="lead anim" style="--d:2"><%= heroLead %></p>
+    <% if (typeof heroActions !== 'undefined') { %><div class="phero__actions anim" style="--d:3"><%- heroActions %></div><% } %>
+  </div>
+</section>

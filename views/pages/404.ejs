@@ -1,0 +1,10 @@
+<%- include('../partials/head', { overHero: false }) %>
+<section class="section legal">
+  <div class="wrap wrap--narrow center">
+    <p class="mono huge-404 anim" style="--d:0">404</p>
+    <h1 class="h2 anim" style="--d:1"><%= t('notFound.title') %></h1>
+    <p class="muted anim" style="--d:2"><%= t('notFound.text') %></p>
+    <a class="btn btn--solid anim" style="--d:3" href="<%= url('/') %>"><%= t('notFound.home') %></a>
+  </div>
+</section>
+<%- include('../partials/foot') %>

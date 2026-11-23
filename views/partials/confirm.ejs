@@ -1,0 +1,28 @@
+<dialog class="dialog" data-confirm aria-labelledby="confirm-title">
+  <form class="dialog__card" method="dialog" novalidate data-confirm-form>
+    <button class="dialog__x" type="button" data-close aria-label="<%= t('nav.close') %>"><%- icon('x', 18) %></button>
+    <div data-step="form">
+      <p class="eyebrow"><%= t('confirm.title') %></p>
+      <h2 id="confirm-title" class="h3" data-confirm-summary></h2>
+      <p class="muted small"><%= t('confirm.lead') %></p>
+      <div class="dialog__total"><span><%= t('common.total') %></span><strong class="mono" data-confirm-total></strong></div>
+      <label class="field"><span class="field__label"><%= t('confirm.name') %></span>
+        <span class="field__box"><%- icon('user', 16) %><input name="name" autocomplete="name" required></span></label>
+      <label class="field"><span class="field__label"><%= t('confirm.mobile') %></span>
+        <span class="field__box"><%- icon('phone', 16) %><input name="mobile" type="tel" inputmode="tel" autocomplete="tel" placeholder="+968" dir="ltr" required></span></label>
+      <label class="field"><span class="field__label"><%= t('confirm.email') %></span>
+        <span class="field__box"><%- icon('mail', 16) %><input name="email" type="email" autocomplete="email" dir="ltr"></span></label>
+      <label class="field"><span class="field__label"><%= t('confirm.notes') %></span>
+        <span class="field__box field__box--area"><textarea name="notes" rows="2"></textarea></span></label>
+      <p class="form-error" data-error hidden></p>
+      <button class="btn btn--solid btn--block" type="submit" data-submit><%= t('confirm.submit') %></button>
+      <p class="tiny muted center"><%= t('confirm.terms') %></p>
+    </div>
+    <div data-step="done" hidden class="dialog__done">
+      <span class="done-mark"><%- icon('check', 28) %></span>
+      <h2 class="h3"><%= t('confirm.successTitle') %></h2>
+      <p class="muted" data-done-text></p>
+      <button class="btn btn--solid" type="button" data-close><%= t('confirm.done') %></button>
+    </div>
+  </form>
+</dialog>

@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Bookings and messages saved by the site (customer data — never upload)
+data/*.jsonl
+
+# Secrets
+.env
+
+# System files
+.DS_Store
+Thumbs.db
+*.log
+.vscode/

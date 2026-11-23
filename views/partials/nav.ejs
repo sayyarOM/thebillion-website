@@ -1,0 +1,29 @@
+<header class="nav <%= (typeof overHero !== 'undefined' && overHero) ? 'nav--over' : '' %>" data-nav>
+  <div class="nav__bar">
+    <a class="nav__logo" href="<%= url('/') %>" aria-label="The Billion — home">
+      <img class="logo-white" src="/brand/tbp-logo-white.svg" alt="The Billion" width="138" height="32">
+      <img class="logo-ink" src="/brand/tbp-logo-ink.svg" alt="" width="138" height="32" aria-hidden="true">
+    </a>
+    <nav class="nav__links" aria-label="Main">
+      <% ['chauffeur','rental','airport','fleet','contact'].forEach(function(k){ %>
+        <a href="<%= url('/' + k) %>" class="<%= page.nav === k ? 'is-active' : '' %>" <%= page.nav === k ? 'aria-current=page' : '' %>><%= t('nav.' + k) %></a>
+      <% }) %>
+    </nav>
+    <div class="nav__end">
+      <a class="nav__lang" href="<%= altUrl %>" hreflang="<%= lang === 'ar' ? 'en' : 'ar' %>" lang="<%= lang === 'ar' ? 'en' : 'ar' %>"><%- icon('globe', 15) %><span><%= t('nav.lang') %></span></a>
+      <a class="btn btn--sm btn--solid nav__book" href="<%= url('/chauffeur') %>"><%= t('nav.book') %></a>
+      <button class="nav__burger" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="<%= t('nav.menu') %>" data-menu-toggle><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mmenu" id="mobile-menu" hidden data-menu>
+  <nav class="mmenu__links" aria-label="Mobile">
+    <% ['chauffeur','rental','airport','fleet','contact'].forEach(function(k, i){ %>
+      <a href="<%= url('/' + k) %>" style="--i:<%= i %>"><span class="mono">0<%= i + 1 %></span><%= t('nav.' + k) %></a>
+    <% }) %>
+  </nav>
+  <div class="mmenu__foot">
+    <a class="btn btn--light" href="<%= url('/chauffeur') %>"><%= t('nav.book') %></a>
+    <a class="mmenu__lang" href="<%= altUrl %>"><%- icon('globe', 16) %> <%= t('nav.lang') %></a>
+  </div>
+</div>

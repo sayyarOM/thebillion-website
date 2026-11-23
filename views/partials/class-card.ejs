@@ -1,0 +1,11 @@
+<a class="vcard reveal" href="<%= url('/chauffeur') %>?class=<%= c.id %>" style="--d:<%= i %>">
+  <div class="vcard__img"><img src="/img/<%= c.img %>-sm.webp" alt="<%= L(c.name) %> — <%= L(c.model) %>" loading="lazy" width="900" height="600"></div>
+  <div class="vcard__body">
+    <div>
+      <h3><%= L(c.name) %></h3>
+      <p class="muted small"><%= L(c.model) %></p>
+    </div>
+    <p class="specs"><span><%- icon('users', 14) %><%= c.seats %></span><span><%- icon('briefcase', 14) %><%= c.bags %></span></p>
+    <p class="price"><span class="mono">OMR <%= omr(c.oneWay) %></span><span class="tiny muted"><%= t('common.airportCity') %></span></p>
+  </div>
+</a>

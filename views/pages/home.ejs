@@ -1,0 +1,189 @@
+<%- include('../partials/head', { overHero: true, preload: 'sclass-dark' }) %>
+
+<!-- HERO — cinematic full-bleed image, line-by-line title reveal, frosted-glass booking card -->
+<section class="hero" data-hero>
+  <div class="hero__media" aria-hidden="true">
+    <img src="/img/sclass-dark.webp" srcset="/img/sclass-dark-sm.webp 900w, /img/sclass-dark.webp 2200w" sizes="100vw" alt="" fetchpriority="high" data-parallax="0.2">
+  </div>
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow eyebrow--light anim" style="--d:0"><%= t('hero.eyebrow') %></p>
+      <h1 class="display display--xl">
+        <span class="line"><span style="--d:1"><%= t('hero.title1') %></span></span>
+        <span class="line"><span style="--d:2"><em><%= t('hero.title2') %></em></span></span>
+      </h1>
+      <p class="lead anim" style="--d:3"><%= t('hero.lead') %></p>
+      <ul class="hero__trust anim" style="--d:4">
+        <% t('hero.trust').forEach(function(x){ %><li><%- icon('check', 14) %><%= x %></li><% }) %>
+      </ul>
+    </div>
+
+    <form class="glass booker anim" style="--d:3" data-hero-booker action="<%= url('/chauffeur') %>" data-action-chauffeur="<%= url('/chauffeur') %>" data-action-rental="<%= url('/rental') %>" method="get" novalidate>
+      <div class="seg seg--glass" role="tablist">
+        <button type="button" role="tab" aria-selected="true" class="is-on" data-tab="chauffeur"><%- icon('car', 15) %><%= t('hero.tabChauffeur') %></button>
+        <button type="button" role="tab" aria-selected="false" data-tab="rental"><%- icon('key-round', 15) %><%= t('hero.tabRental') %></button>
+        <span class="seg__pill" aria-hidden="true"></span>
+      </div>
+
+      <div data-panel="chauffeur">
+        <label class="field"><span class="field__label"><%= t('common.pickup') %></span>
+          <span class="field__box"><%- icon('map-pin', 16) %><input name="pickup" list="places" placeholder="<%= t('common.pickupPh') %>" value="Muscat International Airport, Arrivals" autocomplete="off"></span></label>
+        <label class="field"><span class="field__label"><%= t('common.dropoff') %></span>
+          <span class="field__box"><%- icon('map-pin', 16) %><input name="dropoff" list="places" placeholder="<%= t('common.dropoffPh') %>" autocomplete="off"></span></label>
+        <div class="row2">
+          <label class="field"><span class="field__label"><%= t('common.date') %></span>
+            <span class="field__box"><%- icon('calendar', 16) %><input name="date" type="date" data-default-date="1"></span></label>
+          <label class="field"><span class="field__label"><%= t('common.time') %></span>
+            <span class="field__box"><%- icon('clock', 16) %><input name="time" type="time" value="14:30" step="300"></span></label>
+        </div>
+      </div>
+
+      <div data-panel="rental" hidden>
+        <label class="field"><span class="field__label"><%= t('rental.deliveryTo') %></span>
+          <span class="field__box"><%- icon('map-pin', 16) %><input name="delivery" list="places" placeholder="<%= t('common.deliveryPh') %>" autocomplete="off" disabled></span></label>
+        <div class="row2">
+          <label class="field"><span class="field__label"><%= t('common.from') %></span>
+            <span class="field__box"><%- icon('calendar', 16) %><input name="from" type="date" data-default-date="1" disabled></span></label>
+          <label class="field"><span class="field__label"><%= t('common.to') %></span>
+            <span class="field__box"><%- icon('calendar', 16) %><input name="to" type="date" data-default-date="4" disabled></span></label>
+        </div>
+      </div>
+
+      <button class="btn btn--light btn--block" type="submit">
+        <span data-cta="chauffeur"><%= t('hero.cta') %></span><span data-cta="rental" hidden><%= t('hero.ctaRental') %></span>
+        <%- icon('arrow-right', 16, 'flip') %>
+      </button>
+      <p class="tiny booker__note"><%= t('common.noAccount') %></p>
+    </form>
+  </div>
+  <a class="hero__scroll" href="#services" aria-label="<%= t('hero.scroll') %>"><span></span></a>
+</section>
+
+<datalist id="places"><% catalog.places.forEach(function(p){ %><option value="<%= p %>"><% }) %></datalist>
+
+<!-- STATS STRIP — animated counters -->
+<section class="stats" aria-label="Highlights">
+  <div class="wrap stats__grid">
+    <% t('stats').forEach(function(s, i){ %>
+      <div class="stat reveal" style="--d:<%= i %>">
+        <p class="stat__n mono"><% if (s.zero) { %><%= s.zero %><% } else { %><span data-count="<%= s.n %>">0</span><%= s.suffix %><% } %></p>
+        <p class="muted small"><%= s.label %></p>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section" id="services">
+  <div class="wrap">
+    <%- include('../partials/section-head', { eb: t('services.eyebrow'), ttl: t('services.title'), sub: '', action: '' }) %>
+    <div class="grid2">
+      <a class="scard reveal" href="<%= url('/chauffeur') %>" style="--d:0">
+        <img src="/img/sclass-street.webp" alt="" loading="lazy">
+        <div class="scard__body">
+          <span class="scard__ic"><%- icon('car', 18) %></span>
+          <h3 class="h3"><%= t('services.chauffeur.title') %></h3>
+          <p><%= t('services.chauffeur.text') %></p>
+          <span class="scard__go"><%- icon('arrow-right', 18, 'flip') %></span>
+        </div>
+      </a>
+      <a class="scard reveal" href="<%= url('/rental') %>" style="--d:1">
+        <img src="/img/mercedes-detail.webp" alt="" loading="lazy">
+        <div class="scard__body">
+          <span class="scard__ic"><%- icon('key-round', 18) %></span>
+          <h3 class="h3"><%= t('services.rental.title') %></h3>
+          <p><%= t('services.rental.text') %></p>
+          <span class="scard__go"><%- icon('arrow-right', 18, 'flip') %></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- AIRPORT SERVICES -->
+<section class="section section--stone">
+  <div class="wrap">
+    <%- include('../partials/section-head', { eb: t('airportTeaser.eyebrow'), ttl: t('airportTeaser.title'), sub: t('airportTeaser.lead'),
+      action: '<a class="btn btn--line btn--sm" href="' + url('/airport') + '">' + t('airportTeaser.all') + '</a>' }) %>
+    <div class="tiles">
+      <% catalog.airportServices.forEach(function(s, i){ %>
+        <a class="tile reveal" style="--d:<%= i %>" href="<%= url('/airport') %>?add=<%= s.id %>">
+          <span class="tile__ic"><%- icon(s.icon, 20) %></span>
+          <span class="tile__name"><%= L(s.name) %></span>
+          <span class="tiny muted"><%= t('common.fromPrice') %> <span class="mono">OMR <%= s.price %></span></span>
+        </a>
+      <% }) %>
+    </div>
+    <div class="exp">
+      <% catalog.airportServices.filter(function(s){ return s.img }).reverse().forEach(function(s, i){ %>
+        <a class="exp__card reveal" style="--d:<%= i %>" href="<%= url('/airport') %>?add=<%= s.id %>">
+          <img src="/img/<%= s.img %>-sm.webp" alt="" loading="lazy">
+          <div><h3><%= L(s.name) %></h3><p><%= L(s.desc) %></p><span class="mono small"><%= t('common.fromPrice') %> OMR <%= s.price %></span></div>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- VEHICLE CLASSES -->
+<section class="section">
+  <div class="wrap">
+    <%- include('../partials/section-head', { eb: t('classes.eyebrow'), ttl: t('classes.title'), sub: '',
+      action: '<a class="btn btn--line btn--sm" href="' + url('/fleet') + '">' + t('classes.fleet') + '</a>' }) %>
+    <div class="grid3">
+      <% catalog.transferClasses.forEach(function(c, i){ %><%- include('../partials/class-card', { c: c, i: i }) %><% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- WHY — clip-path image reveal with parallax -->
+<section class="section why">
+  <div class="wrap why__grid">
+    <figure class="why__img clipreveal"><img src="/img/interior.webp" alt="" loading="lazy" data-parallax="0.08"></figure>
+    <div class="why__copy reveal">
+      <p class="eyebrow"><%= t('why.eyebrow') %></p>
+      <h2 class="h2"><%= t('why.title') %></h2>
+      <ul class="checks">
+        <% var whyIcons = ['shield-check','plane','user','car']; t('why.points').forEach(function(p, i){ %>
+          <li class="reveal" style="--d:<%= i %>"><span><%- icon(whyIcons[i], 16) %></span><%= p %></li>
+        <% }) %>
+      </ul>
+      <a class="btn btn--solid" href="<%= url('/chauffeur') %>"><%= t('why.cta') %> <%- icon('arrow-right', 16, 'flip') %></a>
+    </div>
+  </div>
+</section>
+
+<!-- APP CTA — dark band with CSS phone mockup -->
+<section class="section section--tight">
+  <div class="wrap">
+    <div class="appcta reveal">
+      <div class="appcta__copy">
+        <p class="eyebrow eyebrow--light"><%= t('app.eyebrow') %></p>
+        <h2 class="h2"><%= t('app.title') %></h2>
+        <p class="lead"><%= t('app.text') %></p>
+        <div class="stores">
+          <a class="store" href="<%= site.appStoreUrl %>"><%- icon('smartphone', 22) %><span><small><%= t('app.getOn') %></small><%= t('app.appStore') %></span></a>
+          <a class="store" href="<%= site.googlePlayUrl %>"><%- icon('smartphone', 22) %><span><small><%= t('app.getIt') %></small><%= t('app.googlePlay') %></span></a>
+        </div>
+      </div>
+      <div class="phone" aria-hidden="true">
+        <div class="phone__screen">
+          <svg class="phone__map" viewBox="0 0 240 300" preserveAspectRatio="xMidYMid slice">
+            <g stroke="#2a3038" stroke-width="10" fill="none"><path d="M-10 70 H260"/><path d="M60 -10 V320"/><path d="M-10 200 C80 180 160 240 260 210"/><path d="M170 -10 L140 320"/></g>
+            <g stroke="#232830" stroke-width="4" fill="none"><path d="M-10 130 H260"/><path d="M110 -10 V320"/><path d="M-10 260 H260"/></g>
+            <path class="route" d="M60 270 V200 C100 195 130 205 150 200 L162 70" stroke="#B39670" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="60" cy="270" r="6" fill="#fff"/><rect x="156" y="64" width="12" height="12" fill="#B39670"/>
+            <circle class="car-dot" r="7" fill="#fff" stroke="#0F1319" stroke-width="3"/>
+          </svg>
+          <div class="phone__card">
+            <p class="tiny muted-light"><%= t('app.mock.status') %></p>
+            <p class="phone__eta"><%= t('app.mock.eta') %></p>
+            <div class="phone__driver"><span class="avatar"><%- icon('user', 14) %></span><span><%= t('app.mock.driver') %><small><%= t('app.mock.plate') %></small></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

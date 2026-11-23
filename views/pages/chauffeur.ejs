@@ -1,0 +1,97 @@
+<%- include('../partials/head', { overHero: true }) %>
+<%- include('../partials/page-hero', { heroImg: 'interior', heroEyebrow: t('chauffeur.eyebrow'), heroEyebrowLang: lang === 'ar' ? 'en' : 'ar', heroTitle: t('chauffeur.title'), heroLead: t('chauffeur.lead') }) %>
+
+<section class="section section--booking">
+  <div class="wrap book" data-booking="transfer" data-min-hours="<%= catalog.minHours %>">
+    <form class="book__form" novalidate data-form>
+      <div class="seg" role="tablist">
+        <button type="button" role="tab" class="is-on" aria-selected="true" data-mode="oneway"><%= t('chauffeur.oneWay') %></button>
+        <button type="button" role="tab" aria-selected="false" data-mode="hourly"><%= t('chauffeur.byHour') %></button>
+        <span class="seg__pill" aria-hidden="true"></span>
+      </div>
+
+      <div class="row2">
+        <label class="field"><span class="field__label"><%= t('common.pickup') %></span>
+          <span class="field__box"><%- icon('map-pin', 16) %><input name="pickup" list="places" required placeholder="<%= t('common.pickupPh') %>" value="<%= query.pickup || 'Muscat International Airport, Arrivals' %>" autocomplete="off"></span></label>
+        <label class="field" data-oneway-only><span class="field__label"><%= t('common.dropoff') %></span>
+          <span class="field__box"><%- icon('map-pin', 16) %><input name="dropoff" list="places" required placeholder="<%= t('common.dropoffPh') %>" value="<%= query.dropoff || '' %>" autocomplete="off"></span></label>
+        <label class="field" data-hourly-only hidden><span class="field__label"><%= t('chauffeur.duration') %></span>
+          <span class="field__box"><%- icon('hourglass', 16) %>
+            <select name="hours"><% for (var h = catalog.minHours; h <= 12; h++) { %><option value="<%= h %>"><%= h %> <%= t('common.hours') %></option><% } %></select></span>
+          <span class="field__hint"><%= t('chauffeur.minHours', { n: catalog.minHours }) %></span></label>
+      </div>
+      <div class="row3">
+        <label class="field"><span class="field__label"><%= t('common.date') %></span>
+          <span class="field__box"><%- icon('calendar', 16) %><input name="date" type="date" required value="<%= query.date || '' %>" data-default-date="1"></span></label>
+        <label class="field"><span class="field__label"><%= t('common.time') %></span>
+          <span class="field__box"><%- icon('clock', 16) %><input name="time" type="time" required value="<%= query.time || '14:30' %>" step="300"></span></label>
+        <label class="field"><span class="field__label"><%= t('common.flight') %></span>
+          <span class="field__box"><%- icon('plane', 16) %><input name="flight" placeholder="<%= t('common.flightPh') %>" autocomplete="off" dir="ltr" maxlength="10"></span>
+          <span class="field__hint"><%= t('chauffeur.flightNote') %></span></label>
+      </div>
+
+      <p class="eyebrow mt"><%= t('chauffeur.chooseClass') %></p>
+      <div class="options">
+        <% catalog.transferClasses.forEach(function(c, i){ %>
+          <label class="opt">
+            <input type="radio" name="classId" value="<%= c.id %>" <%= (query.class ? query.class === c.id : i === 1) ? 'checked' : '' %>>
+            <img src="/img/<%= c.img %>-sm.webp" alt="" loading="lazy">
+            <span class="opt__body">
+              <strong><%= L(c.name) %></strong>
+              <span class="muted small"><%= L(c.model) %></span>
+              <span class="specs"><span><%- icon('users', 14) %><%= c.seats %></span><span><%- icon('briefcase', 14) %><%= c.bags %></span></span>
+            </span>
+            <span class="opt__price mono" data-price-oneway="<%= c.oneWay %>" data-price-hourly="<%= c.hourly %>">OMR <%= omr(c.oneWay) %></span>
+            <span class="opt__tick"><%- icon('check', 14) %></span>
+          </label>
+        <% }) %>
+      </div>
+
+      <div class="addons" data-addons hidden>
+        <p class="eyebrow mt"><%= t('nav.airport') %></p>
+        <div class="chips">
+          <% catalog.airportServices.forEach(function(s){ %>
+            <label class="chip"><input type="checkbox" name="extras" value="<%= s.id %>"><span><%- icon(s.icon, 15) %><%= L(s.name) %> <em class="mono">+<%= s.price %></em></span></label>
+          <% }) %>
+        </div>
+        <label class="field field--inline"><span class="field__label"><%= t('common.passengers') %></span>
+          <span class="stepper" data-stepper><button type="button" data-step="-1" aria-label="−"><%- icon('minus', 14) %></button><input name="passengers" type="number" value="1" min="1" max="6" inputmode="numeric"><button type="button" data-step="1" aria-label="+"><%- icon('plus', 14) %></button></span></label>
+      </div>
+    </form>
+
+    <aside class="summary" data-summary>
+      <div class="summary__trip">
+        <p class="eyebrow"><span data-s-mode><%= t('chauffeur.oneWay') %></span> · <span data-s-class></span></p>
+        <ol class="route">
+          <li><span class="dot"></span><span data-s-pickup></span></li>
+          <li data-oneway-only><span class="dot dot--sq"></span><span data-s-dropoff></span></li>
+        </ol>
+        <p class="tiny muted meta"><span><%- icon('calendar', 13) %><span data-s-when></span></span><span data-s-flight-wrap hidden><%- icon('plane', 13) %><span data-s-flight></span></span></p>
+      </div>
+      <dl class="lines" data-lines></dl>
+      <div class="lines lines--static">
+        <div><dt><%= t('chauffeur.meet') %></dt><dd><%= t('common.included') %></dd></div>
+      </div>
+      <div class="total"><span><%= t('common.total') %></span><strong class="mono" data-total>—</strong></div>
+      <p class="tiny muted"><%- icon('shield-check', 13) %> <%= t('common.freeCancel') %></p>
+      <button class="btn btn--line btn--block" type="button" data-toggle-addons><%= t('chauffeur.addServices') %></button>
+      <button class="btn btn--solid btn--block" type="button" data-continue><%= t('common.continueConfirm') %></button>
+    </aside>
+  </div>
+</section>
+
+<div class="mbar" data-mbar><div><span class="tiny muted-light"><%= t('common.total') %></span><strong class="mono" data-total>—</strong></div><button class="btn btn--light btn--sm" type="button" data-continue><%= t('common.continue') %></button></div>
+<datalist id="places"><% catalog.places.forEach(function(p){ %><option value="<%= p %>"><% }) %></datalist>
+
+<section class="section section--stone">
+  <div class="wrap">
+    <%- include('../partials/section-head', { eb: t('chauffeur.steps.eyebrow'), ttl: t('chauffeur.steps.title'), sub: '', action: '' }) %>
+    <ol class="steps">
+      <% t('chauffeur.steps.items').forEach(function(s, i){ %>
+        <li class="step reveal" style="--d:<%= i %>"><span class="mono step__n">0<%= i + 1 %></span><h3><%= s[0] %></h3><p class="muted small"><%= s[1] %></p></li>
+      <% }) %>
+    </ol>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

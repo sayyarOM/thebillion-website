@@ -1,0 +1,18 @@
+{
+  "name": "thebillion-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Billion — luxury chauffeur, car rental and airport services in Oman. Website (Node.js + Express).",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "compression": "^1.7.4",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0"
+  }
+}

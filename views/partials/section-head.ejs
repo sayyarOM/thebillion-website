@@ -1,0 +1,8 @@
+<div class="shead reveal">
+  <div>
+    <p class="eyebrow"><%= eb %></p>
+    <h2 class="h2"><%= ttl %></h2>
+    <% if (typeof sub !== 'undefined' && sub) { %><p class="muted"><%= sub %></p><% } %>
+  </div>
+  <% if (typeof action !== 'undefined' && action) { %><%- action %><% } %>
+</div>

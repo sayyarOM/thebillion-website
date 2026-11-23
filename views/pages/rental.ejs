@@ -1,0 +1,60 @@
+<%- include('../partials/head', { overHero: true }) %>
+<%- include('../partials/page-hero', { heroImg: 'range-rover-street', heroEyebrow: t('rental.eyebrow'), heroEyebrowLang: lang === 'ar' ? 'en' : 'ar', heroTitle: t('rental.title'), heroLead: t('rental.lead') }) %>
+
+<section class="section section--booking" data-booking="rental">
+  <div class="wrap">
+    <form class="searchbar" novalidate data-form>
+      <label class="field"><span class="field__label"><%= t('rental.deliveryTo') %></span>
+        <span class="field__box"><%- icon('map-pin', 16) %><input name="pickup" list="places" required placeholder="<%= t('common.deliveryPh') %>" value="<%= query.delivery || '' %>" autocomplete="off"></span></label>
+      <label class="field"><span class="field__label"><%= t('common.from') %></span>
+        <span class="field__box"><%- icon('calendar', 16) %><input name="from" type="date" required value="<%= query.from || '' %>" data-default-date="1"></span></label>
+      <label class="field"><span class="field__label"><%= t('common.to') %></span>
+        <span class="field__box"><%- icon('calendar', 16) %><input name="to" type="date" required value="<%= query.to || '' %>" data-default-date="4"></span></label>
+      <button class="btn btn--solid" type="submit"><%= t('rental.search') %></button>
+    </form>
+    <p class="form-error" data-date-error hidden><%= t('errors.dates') %></p>
+
+    <div class="shead shead--tight reveal">
+      <div><p class="eyebrow" data-days-label data-template="<%= t('rental.fleetDays') %>"></p><h2 class="h2"><%= t('rental.available') %></h2></div>
+    </div>
+    <div class="cars">
+      <% catalog.rentalCars.forEach(function(c, i){ %>
+        <label class="car reveal" style="--d:<%= i %>">
+          <input type="radio" name="carId" value="<%= c.id %>" form="none" <%= query.car === c.id ? 'checked' : '' %>>
+          <span class="car__img"><img src="/img/<%= c.img %>-sm.webp" alt="<%= c.name %>" loading="lazy"></span>
+          <span class="car__body">
+            <span><strong><%= c.name %></strong><span class="muted small"><%= L(c.type) %> · <%= c.year %></span></span>
+            <span class="specs"><span><%- icon('users', 14) %><%= c.seats %></span><span><%- icon('briefcase', 14) %><%= c.bags %></span></span>
+            <span class="car__price"><span class="mono">OMR <%= omr(c.perDay) %></span> <span class="tiny muted"><%= t('common.perDay') %></span></span>
+          </span>
+          <span class="opt__tick"><%- icon('check', 14) %></span>
+        </label>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<div class="reservebar" data-reservebar>
+  <div class="wrap reservebar__in">
+    <div class="reservebar__info"><span class="small" data-rb-car><%= t('rental.chooseCar') %></span><span class="tiny muted-light" data-rb-lines></span></div>
+    <button class="btn btn--light" type="button" data-continue disabled><span data-rb-label><%= t('rental.reserve') %></span></button>
+  </div>
+</div>
+<datalist id="places"><% catalog.places.forEach(function(p){ %><option value="<%= p %>"><% }) %></datalist>
+
+<section class="section section--stone">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow"><%= t('rental.included.eyebrow') %></p>
+      <h2 class="h2"><%= t('rental.included.title') %></h2>
+      <ul class="checks">
+        <% var ri = ['truck','shield-check','fuel','headphones']; t('rental.included.points').forEach(function(p, i){ %>
+          <li class="reveal" style="--d:<%= i %>"><span><%- icon(ri[i], 16) %></span><%= p %></li>
+        <% }) %>
+      </ul>
+    </div>
+    <figure class="split__img clipreveal"><img src="/img/range-rover.webp" alt="" loading="lazy" data-parallax="0.08"></figure>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

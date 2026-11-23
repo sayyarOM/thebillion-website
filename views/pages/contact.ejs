@@ -1,0 +1,38 @@
+<%- include('../partials/head', { overHero: false }) %>
+<section class="section contact">
+  <div class="wrap contact__grid">
+    <div>
+      <p class="eyebrow anim" style="--d:0"><%= t('contact.eyebrow') %></p>
+      <h1 class="display anim" style="--d:1"><%= t('contact.title') %></h1>
+      <p class="lead muted anim" style="--d:2"><%= t('contact.lead') %></p>
+      <form class="cform anim" style="--d:3" novalidate data-contact>
+        <div class="row2">
+          <label class="field"><span class="field__label"><%= t('contact.name') %></span><span class="field__box"><input name="name" autocomplete="name" required></span></label>
+          <label class="field"><span class="field__label"><%= t('contact.mobile') %></span><span class="field__box"><input name="mobile" type="tel" autocomplete="tel" placeholder="+968" dir="ltr" required></span></label>
+        </div>
+        <label class="field"><span class="field__label"><%= t('contact.email') %></span><span class="field__box"><input name="email" type="email" autocomplete="email" dir="ltr"></span></label>
+        <fieldset class="field"><legend class="field__label"><%= t('contact.interest') %></legend>
+          <div class="chips">
+            <% Object.keys(t('contact.interests')).forEach(function(k){ %>
+              <label class="chip"><input type="checkbox" name="interests" value="<%= k %>"><span><%= t('contact.interests.' + k) %></span></label>
+            <% }) %>
+          </div>
+        </fieldset>
+        <label class="field"><span class="field__label"><%= t('contact.message') %></span><span class="field__box field__box--area"><textarea name="message" rows="5" required></textarea></span></label>
+        <p class="form-error" data-error hidden></p>
+        <button class="btn btn--solid" type="submit"><%= t('contact.send') %> <%- icon('arrow-right', 16, 'flip') %></button>
+        <p class="form-ok" data-ok hidden><%- icon('check', 16) %> <%= t('contact.sent') %></p>
+      </form>
+    </div>
+    <aside class="ccard anim" style="--d:2">
+      <img src="/img/chauffeur-door-sm.webp" alt="" loading="lazy">
+      <ul>
+        <li><%- icon('phone', 18) %><span><% if (isSet(site.phone)) { %><a href="tel:<%= site.phone.replace(/\s/g,'') %>" dir="ltr"><%= site.phone %></a><% } else { %><%= site.phone %><% } %> · <%= t('contact.hours') %></span></li>
+        <li><%- icon('mail', 18) %><span><% if (isSet(site.email)) { %><a href="mailto:<%= site.email %>"><%= site.email %></a><% } else { %><%= site.email %><% } %></span></li>
+        <li><%- icon('map-pin', 18) %><span><%= L(site.address) %></span></li>
+        <li><%- icon('plane-landing', 18) %><span><%= L(site.airportDesk) %></span></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+<%- include('../partials/foot') %>

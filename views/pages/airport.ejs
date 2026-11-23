@@ -1,0 +1,58 @@
+<%- include('../partials/head', { overHero: true }) %>
+<%- include('../partials/page-hero', { heroImg: 'land-leave', heroEyebrow: t('airport.eyebrow'), heroEyebrowLang: lang === 'ar' ? 'en' : 'ar', heroTitle: t('airport.title'), heroLead: t('airport.lead') }) %>
+
+<section class="section section--booking">
+  <div class="wrap book" data-booking="airport">
+    <form class="book__form" novalidate data-form>
+      <p class="eyebrow"><%= t('airport.choose') %></p>
+      <h2 class="h2"><%= t('airport.fiveWays') %></h2>
+      <div class="svc">
+        <% var pre = [].concat(query.add || []); catalog.airportServices.forEach(function(s, i){ %>
+          <label class="svc__item reveal" style="--d:<%= i %>">
+            <input type="checkbox" name="services" value="<%= s.id %>" <%= pre.indexOf(s.id) > -1 ? 'checked' : '' %>>
+            <span class="tile__ic"><%- icon(s.icon, 20) %></span>
+            <strong><%= L(s.name) %></strong>
+            <span class="muted tiny"><%= L(s.desc) %></span>
+            <span class="mono small">OMR <%= s.price %></span>
+            <span class="svc__add"><%- icon('plus', 14) %></span>
+          </label>
+        <% }) %>
+      </div>
+      <div class="row2">
+        <label class="field"><span class="field__label"><%= t('common.flight') %></span>
+          <span class="field__box"><%- icon('plane', 16) %><input name="flight" required placeholder="<%= t('common.flightPh') %>" dir="ltr" maxlength="10"></span>
+          <span class="field__hint"><%= t('airport.match') %></span></label>
+        <label class="field"><span class="field__label"><%= t('common.date') %></span>
+          <span class="field__box"><%- icon('calendar', 16) %><input name="date" type="date" required data-default-date="1"></span></label>
+      </div>
+      <label class="field field--inline"><span class="field__label"><%= t('common.passengers') %></span>
+        <span class="stepper" data-stepper><button type="button" data-step="-1" aria-label="−"><%- icon('minus', 14) %></button><input name="passengers" type="number" value="2" min="1" max="20" inputmode="numeric"><button type="button" data-step="1" aria-label="+"><%- icon('plus', 14) %></button></span></label>
+    </form>
+
+    <aside class="summary" data-summary>
+      <p class="eyebrow"><%= t('nav.airport') %></p>
+      <p class="muted small" data-empty><%= t('airport.empty') %></p>
+      <dl class="lines" data-lines></dl>
+      <div class="total"><span><%= t('common.total') %></span><strong class="mono" data-total>—</strong></div>
+      <p class="tiny muted"><%- icon('shield-check', 13) %> <%= t('common.freeCancel') %></p>
+      <button class="btn btn--solid btn--block" type="button" data-continue><%= t('common.continue') %></button>
+    </aside>
+  </div>
+</section>
+<div class="mbar" data-mbar><div><span class="tiny muted-light"><%= t('common.total') %></span><strong class="mono" data-total>—</strong></div><button class="btn btn--light btn--sm" type="button" data-continue><%= t('common.continue') %></button></div>
+
+<section class="section section--stone">
+  <div class="wrap">
+    <%- include('../partials/section-head', { eb: t('airport.exp.eyebrow'), ttl: t('airport.exp.title'), sub: '', action: '' }) %>
+    <div class="exp exp--lg">
+      <% catalog.airportServices.filter(function(s){ return s.img }).reverse().forEach(function(s, i){ %>
+        <div class="exp__card reveal" style="--d:<%= i %>">
+          <img src="/img/<%= s.img %>-sm.webp" alt="" loading="lazy">
+          <div><h3><%= L(s.name) %></h3><p><%= L(s.desc) %></p></div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

@@ -1,0 +1,66 @@
+  </main>
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer__top reveal">
+        <p class="footer__statement"><%= t('footer.statement') %></p>
+        <div class="footer__cta">
+          <a class="btn btn--light" href="<%= url('/chauffeur') %>"><%= t('nav.book') %> <%- icon('arrow-right', 16, 'flip') %></a>
+          <a class="btn btn--ghost-light" href="<%= url('/contact') %>"><%= t('finalCta.secondary') %></a>
+        </div>
+      </div>
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <img src="/brand/tbp-logo-white.svg" alt="The Billion" width="150" height="35" loading="lazy">
+          <p><%= t('footer.tagline') %></p>
+          <ul class="footer__contact">
+            <% if (isSet(site.phone)) { %><li><%- icon('phone', 15) %><a href="tel:<%= site.phone.replace(/\s/g,'') %>" dir="ltr"><%= site.phone %></a></li><% } %>
+            <% if (isSet(site.email)) { %><li><%- icon('mail', 15) %><a href="mailto:<%= site.email %>"><%= site.email %></a></li><% } %>
+            <li><%- icon('plane-landing', 15) %><span><%= L(site.airportDesk) %></span></li>
+          </ul>
+        </div>
+        <div>
+          <h3><%= t('footer.services') %></h3>
+          <a href="<%= url('/chauffeur') %>"><%= t('nav.chauffeur') %></a>
+          <a href="<%= url('/rental') %>"><%= t('nav.rental') %></a>
+          <a href="<%= url('/airport') %>"><%= t('nav.airport') %></a>
+        </div>
+        <div>
+          <h3><%= t('footer.company') %></h3>
+          <a href="<%= url('/fleet') %>"><%= t('nav.fleet') %></a>
+          <a href="<%= url('/contact') %>"><%= t('nav.contact') %></a>
+          <a href="<%= url('/careers') %>"><%= t('footer.careers') %></a>
+        </div>
+        <div>
+          <h3><%= t('footer.legal') %></h3>
+          <a href="<%= url('/terms') %>"><%= t('footer.terms') %></a>
+          <a href="<%= url('/privacy') %>"><%= t('footer.privacy') %></a>
+          <a href="<%= url('/cancellation') %>"><%= t('footer.cancellation') %></a>
+        </div>
+      </div>
+      <div class="footer__wordmark" aria-hidden="true"><img src="/brand/tbp-wordmark-white.svg" alt="" loading="lazy"></div>
+      <div class="footer__bottom">
+        <span>© <%= year %> The Billion. <%= t('footer.rights') %></span>
+        <div>
+          <a href="<%= altUrl %>"><%- icon('globe', 14) %> <%= t('nav.lang') %></a>
+          <a href="#top" data-top><%= t('footer.top') %> ↑</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <% if (site.whatsapp) { %>
+  <a class="wa" href="https://wa.me/<%= site.whatsapp %>" target="_blank" rel="noopener" aria-label="WhatsApp"><%- icon('message-circle', 22) %></a>
+  <% } %>
+
+  <%- include('confirm') %>
+
+  <script type="application/json" id="i18n"><%- JSON.stringify({
+    lang: lang,
+    common: t('common'), confirm: t('confirm'), errors: t('errors'), contact: { sent: t('contact.sent') },
+    chauffeur: { addServices: t('chauffeur.addServices'), hideServices: t('chauffeur.hideServices') },
+    rental: { reserve: t('rental.reserve'), chooseCar: t('rental.chooseCar') }, airport: { empty: t('airport.empty') }
+  }).replace(/</g, '\\u003c') %></script>
+  <script type="application/json" id="catalog"><%- JSON.stringify(catalog).replace(/</g, '\\u003c') %></script>
+  <script src="/js/main.js" defer></script>
+</body>
+</html>
