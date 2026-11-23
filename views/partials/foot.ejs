@@ -53,14 +53,17 @@
   <% } %>
 
   <%- include('confirm') %>
+  <%- include('mappick') %>
 
   <script type="application/json" id="i18n"><%- JSON.stringify({
     lang: lang,
-    common: t('common'), confirm: t('confirm'), errors: t('errors'), contact: { sent: t('contact.sent') },
+    common: t('common'), maps: t('maps'), confirm: t('confirm'), errors: t('errors'), contact: { sent: t('contact.sent') },
     chauffeur: { addServices: t('chauffeur.addServices'), hideServices: t('chauffeur.hideServices') },
     rental: { reserve: t('rental.reserve'), chooseCar: t('rental.chooseCar') }, airport: { empty: t('airport.empty') }
   }).replace(/</g, '\\u003c') %></script>
   <script type="application/json" id="catalog"><%- JSON.stringify(catalog).replace(/</g, '\\u003c') %></script>
+  <script type="application/json" id="maps-config"><%- JSON.stringify({ google: site.mapsGoogle, mapbox: site.mapsMapbox, center: site.mapCenter, regions: site.mapRegions }).replace(/</g, '\\u003c') %></script>
   <script src="/js/main.js" defer></script>
+  <script src="/js/places.js" defer></script>
 </body>
 </html>

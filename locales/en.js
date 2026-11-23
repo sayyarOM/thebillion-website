@@ -102,8 +102,24 @@ module.exports = {
     title: 'Confirm your booking', lead: 'Enter your details to confirm. We will send the confirmation by SMS.',
     name: 'Full name', mobile: 'Mobile number', email: 'Email (optional)', notes: 'Notes for your chauffeur (optional)',
     submit: 'Confirm booking', cancel: 'Back', terms: 'By confirming you agree to our Terms and Cancellation policy.',
-    successTitle: 'Booking received', successText: 'Your reference is {ref}. Our concierge will confirm the details shortly by SMS.', done: 'Done',
+    successTitle: 'Booking received', successText: 'Your reference is {ref}. Our concierge will confirm the details shortly by SMS.', done: 'Done', payNow: 'Pay now',
     error: 'Something went wrong. Please check the details and try again.'
+  },
+  pay: {
+    title: 'Checkout', total: 'Total Amount', method: 'Payment method', card: 'Card', cardInfo: 'Card Information',
+    holder: 'Cardholder Name', holderPh: 'ex. Abdullah Adel', save: 'Save card for future use', pay: 'Pay',
+    secure: 'Secure payment', booking: 'Booking', demo: 'Test mode — no card is charged.',
+    doneTitle: 'Payment received', doneText: 'Booking {ref} is paid. Our concierge will confirm the details shortly by SMS.',
+    paidTitle: 'Already paid', paidText: 'Booking {ref} was paid on {date}.', back: 'Back to the website',
+    error: 'The payment could not be completed. Please try again.', fill: 'Please complete the card details.',
+    types: { transfer: 'Chauffeur transfer', rental: 'Car rental', airport: 'Airport services' }
+  },
+  maps: {
+    onMap: 'Choose on map', current: 'Use my current location', popular: 'Popular places', results: 'Places',
+    search: 'Search for a place', confirm: 'Confirm location', locating: 'Finding the address…',
+    noResults: 'No places found', geoError: 'We could not get your location. Please allow location access or move the map.',
+    loadError: 'The map could not be loaded. Please type the address instead.', dragHint: 'Move the map to place the pin exactly',
+    myLocation: 'My location', selected: 'Selected location', exactPoint: 'Exact point', cancel: 'Cancel'
   },
   errors: { required: 'Please fill in this field.', mobile: 'Please enter a valid mobile number.', email: 'Please enter a valid email.', dates: 'Return must be after pickup.' },
   footer: {

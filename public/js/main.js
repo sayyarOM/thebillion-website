@@ -9,6 +9,8 @@
   const lang = T.lang || 'en';
   const L = o => (o && typeof o === 'object' ? (o[lang] ?? o.en) : o);
   const omr = n => 'OMR ' + Number(n).toFixed(3);
+  // map point chosen by places.js (hidden <name>Lat / <name>Lng inputs) → { lat, lng } or null
+  const geoOf = inp => { const f = inp.form, a = f?.elements[inp.name + 'Lat']?.value, b = f?.elements[inp.name + 'Lng']?.value; return a && b ? { lat: +a, lng: +b } : null; };
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const pad = n => String(n).padStart(2, '0');
   const isoDate = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -179,6 +181,8 @@
       const data = await res.json();
       if (!data.ok) throw new Error(data.error);
       $('[data-done-text]', f).textContent = T.confirm.successText.replace('{ref}', data.ref);
+      const pay = $('[data-pay-link]', f);
+      if (pay) pay.href = pay.dataset.payBase.replace(/\/?$/, '/') + data.ref;
       $('[data-step="form"]', f).hidden = true;
       $('[data-step="done"]', f).hidden = false;
       f.reset();
@@ -253,7 +257,7 @@
       const s = update();
       openConfirm({
         type: 'transfer', mode, classId: s.cls.id, hours: s.hours, extras: s.extras.map(x => x.id), passengers: s.pax,
-        pickup: f.pickup.value, dropoff: mode === 'oneway' ? f.dropoff.value : '', date: f.date.value, time: f.time.value, flight: f.flight.value
+        pickup: f.pickup.value, pickupGeo: geoOf(f.pickup), dropoff: mode === 'oneway' ? f.dropoff.value : '', dropoffGeo: mode === 'oneway' ? geoOf(f.dropoff) : null, date: f.date.value, time: f.time.value, flight: f.flight.value
       }, `${L(s.cls.name)} · ${fmtDate(f.date.value)}, ${f.time.value}`, s.total);
     }));
     update();
@@ -293,7 +297,7 @@
     $('[data-continue]', bar).addEventListener('click', () => {
       if (!validate([f.pickup, f.from, f.to])) return;
       const s = update(); if (!s) return;
-      openConfirm({ type: 'rental', carId: s.car.id, pickup: f.pickup.value, from: f.from.value, to: f.to.value },
+      openConfirm({ type: 'rental', carId: s.car.id, pickup: f.pickup.value, pickupGeo: geoOf(f.pickup), from: f.from.value, to: f.to.value },
         `${s.car.name} · ${s.n} ${T.common.days}`, s.total);
     });
     update();

@@ -2,6 +2,8 @@
  * The Billion — website server (Node.js + Express + EJS)
  * Run:  npm install && npm start   →  http://localhost:3000   (Arabic: /ar)
  */
+// .env next to this file (Node 20.12+ built-in; no dotenv needed). Real environment variables win.
+try { process.loadEnvFile(require('path').join(__dirname, '.env')); } catch { /* no .env — use the environment */ }
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -25,6 +27,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
+// Maps: Google search and Mapbox tiles both go through this server (/api/maps/*), so no keys reach the browser.
+// Fallback when they are not configured: OpenStreetMap tiles, Photon search, Nominatim addresses. Leaflet is self-hosted.
+const G = { img: ['https://tile.openstreetmap.org'], connect: ['https://photon.komoot.io', 'https://nominatim.openstreetmap.org'] };
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -32,13 +37,15 @@ app.use(helmet({
       styleSrc: ["'self'"],
       styleSrcAttr: ["'unsafe-inline'"], // only CSS custom properties like style="--d:1" for animation stagger
       fontSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:'],
+      imgSrc: ["'self'", 'data:', ...G.img],
       scriptSrc: ["'self'"],
-      connectSrc: ["'self'"],
+      connectSrc: ["'self'", ...G.connect],
       formAction: ["'self'"]
     }
   },
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  // send our origin to map/search providers (OpenStreetMap blocks tile requests that carry no Referer)
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 }));
 app.use(compression());
 app.use(express.json({ limit: '20kb' }));
@@ -119,6 +126,13 @@ function readStore(file) {
 const clean = (v, max = 200) => String(v ?? '').replace(/[<>]/g, '').trim().slice(0, max);
 const validMobile = v => /^\+?[0-9 ]{8,16}$/.test(String(v || '').trim());
 const validEmail = v => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v).trim());
+// Map point picked on the website ({ lat, lng }) → stored with a Google Maps link for the dispatcher; anything else → null
+const geo = g => {
+  const lat = Number(g?.lat), lng = Number(g?.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180 || (lat === 0 && lng === 0)) return null;
+  const p = { lat: Math.round(lat * 1e6) / 1e6, lng: Math.round(lng * 1e6) / 1e6 };
+  return { ...p, url: `https://www.google.com/maps?q=${p.lat},${p.lng}` };
+};
 const reference = () => 'TB-' + crypto.randomBytes(3).toString('hex').toUpperCase();
 
 function quote(type, b) {
@@ -146,7 +160,7 @@ app.post('/api/bookings', rateLimit(), (req, res) => {
     ref: reference(), type: b.type, status: 'new', createdAt: new Date().toISOString(), lang: b.lang === 'ar' ? 'ar' : 'en',
     trip: {
       mode: clean(b.mode, 10), classId: clean(b.classId, 30), carId: clean(b.carId, 30),
-      pickup: clean(b.pickup), dropoff: clean(b.dropoff), date: clean(b.date, 10), time: clean(b.time, 5),
+      pickup: clean(b.pickup), pickupGeo: geo(b.pickupGeo), dropoff: clean(b.dropoff), dropoffGeo: geo(b.dropoffGeo), date: clean(b.date, 10), time: clean(b.time, 5),
       from: clean(b.from, 10), to: clean(b.to, 10), flight: clean(b.flight, 12), passengers: q.passengers
     },
     customer: { name: clean(c.name, 80), mobile: clean(c.mobile, 20), email: clean(c.email, 120), notes: clean(c.notes, 500) },
@@ -177,7 +191,114 @@ app.post('/api/contact', rateLimit(), (req, res) => {
 app.get('/api/admin/:what(bookings|messages)', (req, res) => {
   const token = process.env.ADMIN_TOKEN;
   if (!token || req.get('authorization') !== `Bearer ${token}`) return res.status(401).json({ ok: false });
-  res.json({ ok: true, items: readStore(req.params.what + '.jsonl').reverse() });
+  let items = readStore(req.params.what + '.jsonl').reverse();
+  if (req.params.what === 'bookings') {
+    const paid = new Map(readStore('payments.jsonl').map(p => [p.ref, p]));
+    items = items.map(b => ({ ...b, payment: paid.get(b.ref) || null }));
+  }
+  res.json({ ok: true, items });
+});
+
+/* ---------- maps: Google search + Mapbox tiles through this server ----------
+ * GOOGLE_MAPS_KEY  — server key with Places API + Geocoding API (same endpoints as the Sayyar website's /gmaps proxy)
+ * MAPBOX_TOKEN     — Mapbox token for the map tiles (MAPBOX_STYLE optional, default mapbox/streets-v12) */
+const GKEY = () => process.env.GOOGLE_MAPS_KEY || '';
+const MBOX = () => process.env.MAPBOX_TOKEN || '';
+const mapsLang = v => (v === 'ar' ? 'ar' : 'en');
+const PLUS_CODE = /^[23456789CFGHJMPQRVWX]{4,8}\+[23456789CFGHJMPQRVWX]{2,3}\b[\s,،]*/i;
+const tidyAddress = s => String(s || '').replace(PLUS_CODE, '').replace(/[\s,،]*(Oman|عمان|سلطنة عمان)$/i, '').trim();
+async function google(api, params) {
+  const r = await fetch(`https://maps.googleapis.com/maps/api/${api}/json?` + new URLSearchParams({ ...params, key: GKEY() }), { signal: AbortSignal.timeout(7000) });
+  const d = await r.json();
+  if (d.status === 'ZERO_RESULTS') return d;
+  if (d.status !== 'OK') { const e = new Error(`google ${api}: ${d.status}`); e.status = d.status; throw e; }
+  return d;
+}
+const mapsFail = (res, e) => { console.warn('[maps]', e.message); res.status(502).json({ ok: false, error: 'maps provider failed' }); };
+const center = `${site.mapCenter.lat},${site.mapCenter.lng}`;
+const country = site.mapRegions.map(c => 'country:' + c).join('|');
+
+app.get('/api/maps/search', rateLimit(300, 10 * 60 * 1000), async (req, res) => {
+  if (!GKEY()) return res.status(503).json({ ok: false, error: 'not configured' });
+  const q = clean(req.query.q, 120), session = clean(req.query.session, 64);
+  if (q.length < 2) return res.json({ ok: true, items: [] });
+  try {
+    const d = await google('place/autocomplete', { input: q, components: country, language: mapsLang(req.query.lang), location: center, radius: 50000, ...(session && { sessiontoken: session }) });
+    res.json({ ok: true, items: (d.predictions || []).slice(0, 5).map(p => ({
+      id: p.place_id, main: p.structured_formatting?.main_text || p.description, sub: tidyAddress(p.structured_formatting?.secondary_text || '')
+    })) });
+  } catch (e) { mapsFail(res, e); }
+});
+
+app.get('/api/maps/place/:id', rateLimit(300, 10 * 60 * 1000), async (req, res) => {
+  if (!GKEY()) return res.status(503).json({ ok: false, error: 'not configured' });
+  const session = clean(req.query.session, 64);
+  try {
+    const d = await google('place/details', { place_id: clean(req.params.id, 300), fields: 'geometry,name,formatted_address', language: mapsLang(req.query.lang), ...(session && { sessiontoken: session }) });
+    const l = d.result?.geometry?.location;
+    if (!l) return res.status(404).json({ ok: false });
+    res.json({ ok: true, lat: l.lat, lng: l.lng, name: d.result.name, address: tidyAddress(d.result.formatted_address) });
+  } catch (e) { mapsFail(res, e); }
+});
+
+app.get('/api/maps/geocode', rateLimit(300, 10 * 60 * 1000), async (req, res) => {
+  if (!GKEY()) return res.status(503).json({ ok: false, error: 'not configured' });
+  const lat = Number(req.query.lat), lng = Number(req.query.lng), q = clean(req.query.q, 160);
+  const params = Number.isFinite(lat) && Number.isFinite(lng) ? { latlng: `${lat},${lng}` } : q ? { address: q, components: country } : null;
+  if (!params) return res.status(400).json({ ok: false });
+  try {
+    const d = await google('geocode', { ...params, language: mapsLang(req.query.lang) });
+    const results = d.results || [];
+    // first real street / road / place; skip bare plus codes
+    const r = results.find(x => !x.types.includes('plus_code')) || results[0];
+    if (!r) return res.json({ ok: true, found: false });
+    res.json({ ok: true, found: true, lat: r.geometry.location.lat, lng: r.geometry.location.lng, address: tidyAddress(r.formatted_address) });
+  } catch (e) { mapsFail(res, e); }
+});
+
+// Mapbox raster tiles (512px; Leaflet uses zoomOffset -1). Cached by the browser for a week.
+app.get('/api/maps/tiles/:z/:x/:y', async (req, res) => {
+  const [z, x, y] = [req.params.z, req.params.x, req.params.y].map(Number);
+  if (!MBOX()) return res.sendStatus(404);
+  if (![z, x, y].every(Number.isInteger) || z < 0 || z > 22 || x < 0 || y < 0 || x >= 2 ** z || y >= 2 ** z) return res.sendStatus(400);
+  const style = (process.env.MAPBOX_STYLE || 'mapbox/streets-v12').replace(/[^\w/.-]/g, '');
+  try {
+    const r = await fetch(`https://api.mapbox.com/styles/v1/${style}/tiles/512/${z}/${x}/${y}@2x?access_token=${encodeURIComponent(MBOX())}`, { signal: AbortSignal.timeout(10000) });
+    if (!r.ok) return res.sendStatus(r.status === 404 ? 404 : 502);
+    res.set({ 'Content-Type': r.headers.get('content-type') || 'image/png', 'Cache-Control': 'public, max-age=604800' });
+    res.send(Buffer.from(await r.arrayBuffer()));
+  } catch (e) { console.warn('[maps] tile', e.message); res.sendStatus(502); }
+});
+
+/* ---------- checkout page (DEMO payment) ----------
+ * /pay/TB-XXXXXX shows the booking total and a card form. Until a real gateway is connected, ANY card details are
+ * accepted: the browser sends nothing about the card (no number, no CVV) — the server only records "paid (demo)". */
+const REF_RE = /^TB-[0-9A-F]{6}$/;
+const findBooking = ref => readStore('bookings.jsonl').find(b => b.ref === ref) || null;
+const findPayment = ref => readStore('payments.jsonl').find(p => p.ref === ref) || null;
+
+for (const lang of ['en', 'ar']) {
+  app.get((lang === 'ar' ? '/ar' : '') + '/pay/:ref', (req, res, next) => {
+    const ref = String(req.params.ref).toUpperCase();
+    const booking = REF_RE.test(ref) && findBooking(ref);
+    if (!booking) return next(); // → 404 page
+    const h = viewHelpers(lang, '/pay/' + ref);
+    res.set('Cache-Control', 'no-store');
+    res.render('pages/pay', { ...h, page: { nav: null, view: 'pay' }, query: {}, booking, payment: findPayment(ref), title: `${h.t('pay.title')} — The Billion` });
+  });
+}
+
+app.post('/api/pay/:ref', rateLimit(), (req, res) => {
+  const ref = String(req.params.ref).toUpperCase();
+  const booking = REF_RE.test(ref) && findBooking(ref);
+  if (!booking) return res.status(404).json({ ok: false, error: 'Booking not found.' });
+  const existing = findPayment(ref);
+  if (existing) return res.json({ ok: true, ref, paidAt: existing.paidAt, already: true });
+  const brand = ['visa', 'mastercard', 'amex', 'card'].includes(req.body?.brand) ? req.body.brand : 'card';
+  const payment = { ref, paidAt: new Date().toISOString(), amount: booking.price.total, currency: booking.price.currency, method: brand, mode: 'demo' };
+  store('payments.jsonl', payment);
+  console.log(`[payment] ${ref} OMR ${Number(payment.amount).toFixed(3)} (demo)`);
+  res.json({ ok: true, ref, paidAt: payment.paidAt });
 });
 
 /* ---------- SEO ---------- */

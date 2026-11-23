@@ -1,0 +1,26 @@
+<dialog class="dialog dialog--map" data-mappick aria-labelledby="mappick-title">
+  <div class="dialog__card mappick">
+    <button class="dialog__x" type="button" data-mappick-close aria-label="<%= t('nav.close') %>"><%- icon('x', 18) %></button>
+    <p class="eyebrow"><%= t('maps.onMap') %></p>
+    <h2 id="mappick-title" class="h3" data-mappick-title></h2>
+    <label class="field"><span class="field__box"><%- icon('search', 16) %><input data-mappick-search type="search" placeholder="<%= t('maps.search') %>" aria-label="<%= t('maps.search') %>" autocomplete="off" enterkeyhint="search"></span></label>
+    <div class="mappick__bar">
+      <span class="small muted"><%= t('maps.dragHint') %></span>
+      <button class="btn btn--line btn--sm" type="button" data-mappick-locate><%- icon('locate-fixed', 16) %> <%= t('maps.myLocation') %></button>
+    </div>
+    <div class="mappick__frame">
+      <div class="mappick__map" data-mappick-map></div>
+      <div class="mappick__center" data-mappick-center aria-hidden="true"><span class="pin-marker"></span></div>
+      <span class="mappick__shadow" data-mappick-shadow aria-hidden="true"></span>
+    </div>
+    <div class="mappick__addr">
+      <span class="mappick__addr-ic"><%- icon('map-pin', 18) %></span>
+      <div><span class="mappick__addr-lbl"><%= t('maps.selected') %></span><span class="mappick__addr-val" data-mappick-address>—</span></div>
+    </div>
+    <p class="form-error" data-mappick-error hidden></p>
+    <div class="mappick__foot">
+      <button class="btn btn--line" type="button" data-mappick-cancel><%= t('maps.cancel') %></button>
+      <button class="btn btn--solid" type="button" data-mappick-confirm disabled><%= t('maps.confirm') %></button>
+    </div>
+  </div>
+</dialog>

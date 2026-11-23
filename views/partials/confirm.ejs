@@ -22,7 +22,8 @@
       <span class="done-mark"><%- icon('check', 28) %></span>
       <h2 class="h3"><%= t('confirm.successTitle') %></h2>
       <p class="muted" data-done-text></p>
-      <button class="btn btn--solid" type="button" data-close><%= t('confirm.done') %></button>
+      <a class="btn btn--solid" href="#" data-pay-link data-pay-base="<%= url('/pay/') %>"><%- icon('lock', 15) %> <%= t('confirm.payNow') %></a>
+      <button class="btn btn--line" type="button" data-close><%= t('confirm.done') %></button>
     </div>
   </form>
 </dialog>

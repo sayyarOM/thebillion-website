@@ -75,6 +75,10 @@ npm start
 | POST | `/api/quote/:type` | `transfer` \| `rental` \| `airport` → lines, VAT, total |
 | POST | `/api/bookings` | Saves a booking, returns `{ ref: "TB-XXXXXX" }` |
 | POST | `/api/contact` | Saves a concierge request |
+| GET | `/api/maps/search` · `/api/maps/place/:id` · `/api/maps/geocode` | Google place search / place location / address ↔ point (key stays on the server) |
+| GET | `/api/maps/tiles/:z/:x/:y` | Mapbox map tiles (token stays on the server) |
+| GET | `/pay/:ref` · `/ar/pay/:ref` | Checkout page for a booking (**demo**: any card is accepted, card data never leaves the browser) |
+| POST | `/api/pay/:ref` | Marks the booking paid (demo) → `data/payments.jsonl`; admin bookings feed shows `payment` |
 | GET | `/api/admin/bookings` · `/api/admin/messages` | For the control dashboard. Header: `Authorization: Bearer <ADMIN_TOKEN>` |
 
 ## Deploy · النشر
@@ -82,7 +86,7 @@ npm start
 The site needs a Node.js host (it has a server and an API), for example Render, Railway, Fly.io, a VPS, or any host that runs Node.js.
 GitHub Pages cannot run it because it only serves static files.
 
-1. Set environment variables from `.env.example` (`NODE_ENV=production`, `SITE_URL`, `ADMIN_TOKEN`).
+1. Set environment variables from `.env.example` (`NODE_ENV=production`, `SITE_URL`, `ADMIN_TOKEN`, `GOOGLE_MAPS_KEY`).
 2. Build command: `npm install` · Start command: `npm start`.
 
 ## Before launch · قبل الإطلاق
@@ -90,7 +94,8 @@ GitHub Pages cannot run it because it only serves static files.
 - [ ] Real contact details in `config/site.js` (replace the `[PLACEHOLDERS]`).
 - [ ] Confirm hourly prices and minimum hours in `config/catalog.js` (marked PLACEHOLDER).
 - [ ] Real fleet photos in `public/img/` (keep the same file names).
-- [ ] Connect Google Maps / Mapbox for addresses, online payment, and SMS confirmation.
+- [ ] Maps (server-side, in `.env` / host env): `GOOGLE_MAPS_KEY` (Places API + Geocoding API — same key as the Sayyar website's `/gmaps` proxy) for place search, `MAPBOX_TOKEN` for the map tiles. Missing → free fallback (Photon / Nominatim / OpenStreetMap).
+- [ ] Replace the demo checkout (`public/js/pay.js` → `/api/pay/:ref`) with the real gateway (e.g. Paymob), and add SMS confirmation.
 - [ ] Replace the bookings file storage (`store()` in `server.js`) with a database or the dashboard API.
 - [ ] Write the legal pages (text in `locales/en.js` and `locales/ar.js` → `legal`).
 
