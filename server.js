@@ -250,11 +250,14 @@ app.get('/api/maps/geocode', rateLimit(300, 10 * 60 * 1000), async (req, res) =>
   if (!params) return res.status(400).json({ ok: false });
   try {
     const d = await google('geocode', { ...params, language: mapsLang(req.query.lang) });
-    const results = d.results || [];
-    // first real street / road / place; skip bare plus codes
-    const r = results.find(x => !x.types.includes('plus_code')) || results[0];
+    // Google often lists plus-code / whole-city results first: take the most precise real address
+    // (street → place → road → area → anything), like the Sayyar website does.
+    const results = (d.results || []).filter(x => !x.types.includes('plus_code') && tidyAddress(x.formatted_address));
+    const RANK = [['street_address', 'premise', 'subpremise'], ['establishment', 'point_of_interest'], ['route', 'intersection'],
+      ['neighborhood', 'sublocality', 'sublocality_level_1', 'sublocality_level_2']];
+    const r = RANK.map(types => results.find(x => x.types.some(t => types.includes(t)))).find(Boolean) || results[0] || (d.results || [])[0];
     if (!r) return res.json({ ok: true, found: false });
-    res.json({ ok: true, found: true, lat: r.geometry.location.lat, lng: r.geometry.location.lng, address: tidyAddress(r.formatted_address) });
+    res.json({ ok: true, found: true, lat: r.geometry.location.lat, lng: r.geometry.location.lng, address: tidyAddress(r.formatted_address) || r.formatted_address });
   } catch (e) { mapsFail(res, e); }
 });
 
