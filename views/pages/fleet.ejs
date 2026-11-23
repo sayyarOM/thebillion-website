@@ -17,7 +17,7 @@
     <div class="hscroll" data-hscroll>
       <% catalog.rentalCars.forEach(function(c, i){ %>
         <a class="rcard reveal" style="--d:<%= i %>" href="<%= url('/rental') %>?car=<%= c.id %>">
-          <span class="rcard__img"><img src="/img/<%= c.img %>-sm.webp" alt="<%= c.name %>" loading="lazy"></span>
+          <span class="rcard__img"><img src="<%= base %>/img/<%= c.img %>-sm.webp" alt="<%= c.name %>" loading="lazy"></span>
           <span class="rcard__row"><strong><%= c.name %></strong><span class="mono small">OMR <%= omr(c.perDay) %> / <%= t('common.day') %></span></span>
           <span class="muted small"><%= L(c.type) %> · <%= c.year %> · <%= c.seats %> <%= t('common.seats') %> · <%= c.bags %> <%= t('common.bags') %></span>
         </a>
@@ -28,10 +28,10 @@
 
 <section class="section">
   <div class="wrap mosaic">
-    <figure class="clipreveal m1"><img src="/img/chauffeur-door-sm.webp" alt="" loading="lazy"></figure>
-    <figure class="clipreveal m2"><img src="/img/bentley-detail-sm.webp" alt="" loading="lazy"></figure>
-    <figure class="clipreveal m3"><img src="/img/vclass-sm.webp" alt="" loading="lazy"></figure>
-    <figure class="clipreveal m4"><img src="/img/van-chauffeur-sm.webp" alt="" loading="lazy"></figure>
+    <figure class="clipreveal m1"><img src="<%= base %>/img/chauffeur-door-sm.webp" alt="" loading="lazy"></figure>
+    <figure class="clipreveal m2"><img src="<%= base %>/img/bentley-detail-sm.webp" alt="" loading="lazy"></figure>
+    <figure class="clipreveal m3"><img src="<%= base %>/img/vclass-sm.webp" alt="" loading="lazy"></figure>
+    <figure class="clipreveal m4"><img src="<%= base %>/img/van-chauffeur-sm.webp" alt="" loading="lazy"></figure>
   </div>
 </section>
 <%- include('../partials/foot') %>

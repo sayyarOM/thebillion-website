@@ -2,23 +2,23 @@
   var total = omr(booking.price.total);
   var other = lang === 'ar' ? 'en' : 'ar';
 %><!DOCTYPE html>
-<html lang="<%= lang %>" dir="<%= dir %>">
+<html lang="<%= lang %>" dir="<%= dir %>" data-base="<%= base %>">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <title><%= title %></title>
   <meta name="theme-color" content="#FFFFFF">
-  <link rel="icon" type="image/png" href="<%= site.payMerchant.logo %>">
-  <link rel="stylesheet" href="/css/fonts.css">
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" type="image/png" href="<%= base %><%= site.payMerchant.logo %>">
+  <link rel="stylesheet" href="<%= base %>/css/fonts.css">
+  <link rel="stylesheet" href="<%= base %>/css/main.css">
 </head>
 <body class="page-pay">
 <main class="pay" data-pay data-ref="<%= booking.ref %>">
   <!-- left: merchant + amount -->
   <section class="pay__side">
     <header class="pay__merchant">
-      <img class="pay__logo" src="<%= site.payMerchant.logo %>" alt="" width="64" height="64">
+      <img class="pay__logo" src="<%= base %><%= site.payMerchant.logo %>" alt="" width="64" height="64">
       <div>
         <strong><%= site.payMerchant.name %></strong>
         <span><%= L(site.payMerchant.address) %></span>
@@ -99,6 +99,6 @@
   </section>
 </main>
 <script type="application/json" id="pay-i18n"><%- JSON.stringify({ fill: t('pay.fill'), error: t('pay.error') }).replace(/</g, '\\u003c') %></script>
-<script src="/js/pay.js" defer></script>
+<script src="<%= base %>/js/pay.js" defer></script>
 </body>
 </html>

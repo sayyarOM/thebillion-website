@@ -47,7 +47,7 @@
     <div class="exp exp--lg">
       <% catalog.airportServices.filter(function(s){ return s.img }).reverse().forEach(function(s, i){ %>
         <div class="exp__card reveal" style="--d:<%= i %>">
-          <img src="/img/<%= s.img %>-sm.webp" alt="" loading="lazy">
+          <img src="<%= base %>/img/<%= s.img %>-sm.webp" alt="" loading="lazy">
           <div><h3><%= L(s.name) %></h3><p><%= L(s.desc) %></p></div>
         </div>
       <% }) %>

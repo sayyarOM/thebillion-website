@@ -35,7 +35,7 @@
         <% catalog.transferClasses.forEach(function(c, i){ %>
           <label class="opt">
             <input type="radio" name="classId" value="<%= c.id %>" <%= (query.class ? query.class === c.id : i === 1) ? 'checked' : '' %>>
-            <img src="/img/<%= c.img %>-sm.webp" alt="" loading="lazy">
+            <img src="<%= base %>/img/<%= c.img %>-sm.webp" alt="" loading="lazy">
             <span class="opt__body">
               <strong><%= L(c.name) %></strong>
               <span class="muted small"><%= L(c.model) %></span>

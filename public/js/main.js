@@ -1,6 +1,7 @@
 /* The Billion — front-end behaviour (no dependencies) */
 (() => {
   'use strict';
+  const BASE = (document.documentElement.dataset.base || '').replace(/\/+$/, ''); // site mounted under a sub-path (BASE_PATH)
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const json = id => { try { return JSON.parse($('#' + id).textContent); } catch { return {}; } };
@@ -174,7 +175,7 @@
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = T.errors.email; err.hidden = false; return; }
     btn.disabled = true;
     try {
-      const res = await fetch('/api/bookings', {
+      const res = await fetch(BASE + '/api/bookings', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...pending, lang, customer: { name, mobile, email, notes: f.notes.value } })
       });
@@ -339,7 +340,7 @@
     if (!/^\+?[0-9 ]{8,16}$/.test(cf.mobile.value.trim())) { err.textContent = T.errors.mobile; err.hidden = false; return; }
     btn.disabled = true;
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(BASE + '/api/contact', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: cf.name.value, mobile: cf.mobile.value, email: cf.email.value, message: cf.message.value, interests: $$('input[name="interests"]:checked', cf).map(i => i.value) })
       });

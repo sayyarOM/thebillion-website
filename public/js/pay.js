@@ -3,6 +3,7 @@
  * and the card brand. Replace submit() with the real gateway (e.g. Paymob) when it is connected. */
 (() => {
   'use strict';
+  const BASE = (document.documentElement.dataset.base || '').replace(/\/+$/, ''); // site mounted under a sub-path (BASE_PATH)
   const $ = (s, r = document) => r.querySelector(s);
   const root = $('[data-pay]');
   if (!root) return;
@@ -44,7 +45,7 @@
     if (!filled()) { err.textContent = T.fill || 'Please complete the card details.'; err.hidden = false; return; }
     btn.disabled = true; btn.classList.add('is-busy');
     try {
-      const res = await fetch('/api/pay/' + encodeURIComponent(root.dataset.ref), {
+      const res = await fetch(BASE + '/api/pay/' + encodeURIComponent(root.dataset.ref), {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ brand: brandOf(digits(f.number.value)) })
       });

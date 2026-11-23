@@ -1,8 +1,8 @@
 <header class="nav <%= (typeof overHero !== 'undefined' && overHero) ? 'nav--over' : '' %>" data-nav>
   <div class="nav__bar">
     <a class="nav__logo" href="<%= url('/') %>" aria-label="The Billion — home">
-      <img class="logo-white" src="/brand/tbp-logo-white.svg" alt="The Billion" width="138" height="32">
-      <img class="logo-ink" src="/brand/tbp-logo-ink.svg" alt="" width="138" height="32" aria-hidden="true">
+      <img class="logo-white" src="<%= base %>/brand/tbp-logo-white.svg" alt="The Billion" width="138" height="32">
+      <img class="logo-ink" src="<%= base %>/brand/tbp-logo-ink.svg" alt="" width="138" height="32" aria-hidden="true">
     </a>
     <nav class="nav__links" aria-label="Main">
       <% ['chauffeur','rental','airport','fleet','contact'].forEach(function(k){ %>

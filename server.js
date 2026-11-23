@@ -19,6 +19,8 @@ const locales = { en: require('./locales/en'), ar: require('./locales/ar') };
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// Optional sub-path, e.g. BASE_PATH=/thebillion when served at https://sayyar.om/thebillion (Apache ProxyPass keeps the prefix)
+const BASE = ('/' + String(process.env.BASE_PATH || '').replace(/^\/+|\/+$/g, '')).replace(/^\/$/, '');
 const DATA_DIR = path.join(__dirname, 'data');
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -66,9 +68,9 @@ function viewHelpers(lang, pagePath) {
   };
   const prefix = lang === 'ar' ? '/ar' : '';
   return {
-    lang, dir: lang === 'ar' ? 'rtl' : 'ltr', t, icon, site, catalog,
-    url: p => (prefix + (p === '/' ? '' : p)) || '/',
-    altUrl: lang === 'ar' ? (pagePath || '/') : '/ar' + (pagePath === '/' ? '' : pagePath),
+    lang, dir: lang === 'ar' ? 'rtl' : 'ltr', t, icon, site, catalog, base: BASE,
+    url: p => BASE + ((prefix + (p === '/' ? '' : p)) || '/'),
+    altUrl: BASE + (lang === 'ar' ? (pagePath || '/') : '/ar' + (pagePath === '/' ? '' : pagePath)),
     L: o => (o && typeof o === 'object' ? (o[lang] ?? o.en) : o),
     omr: n => Number(n).toFixed(3),
     isSet: v => v && !String(v).startsWith('['),
@@ -302,10 +304,10 @@ app.post('/api/pay/:ref', rateLimit(), (req, res) => {
 });
 
 /* ---------- SEO ---------- */
-app.get('/robots.txt', (req, res) => res.type('text/plain').send(`User-agent: *\nAllow: /\nSitemap: ${site.domain}/sitemap.xml\n`));
+app.get('/robots.txt', (req, res) => res.type('text/plain').send(`User-agent: *\nAllow: /\nSitemap: ${site.domain}${BASE}/sitemap.xml\n`));
 app.get('/sitemap.xml', (req, res) => {
   const urls = pages.flatMap(p => [p.path, '/ar' + (p.path === '/' ? '' : p.path)]);
-  res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(u => `<url><loc>${site.domain}${u}</loc></url>`).join('')}</urlset>`);
+  res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(u => `<url><loc>${site.domain}${BASE}${u}</loc></url>`).join('')}</urlset>`);
 });
 
 /* ---------- 404 ---------- */
@@ -315,4 +317,14 @@ app.use((req, res) => {
   res.status(404).render('pages/404', { ...h, page: { nav: null }, query: {}, title: h.t('notFound.title') + ' — The Billion' });
 });
 
-app.listen(PORT, () => console.log(`The Billion website running on http://localhost:${PORT}`));
+if (BASE) {
+  // everything lives under BASE; the bare root just points there
+  const root = express();
+  root.disable('x-powered-by');
+  root.set('trust proxy', 1);
+  root.get('/', (req, res) => res.redirect(BASE + '/'));
+  root.use(BASE, app);
+  root.listen(PORT, () => console.log(`The Billion website running on http://localhost:${PORT}${BASE}/`));
+} else {
+  app.listen(PORT, () => console.log(`The Billion website running on http://localhost:${PORT}`));
+}

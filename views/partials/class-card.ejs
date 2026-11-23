@@ -1,5 +1,5 @@
 <a class="vcard reveal" href="<%= url('/chauffeur') %>?class=<%= c.id %>" style="--d:<%= i %>">
-  <div class="vcard__img"><img src="/img/<%= c.img %>-sm.webp" alt="<%= L(c.name) %> — <%= L(c.model) %>" loading="lazy" width="900" height="600"></div>
+  <div class="vcard__img"><img src="<%= base %>/img/<%= c.img %>-sm.webp" alt="<%= L(c.name) %> — <%= L(c.model) %>" loading="lazy" width="900" height="600"></div>
   <div class="vcard__body">
     <div>
       <h3><%= L(c.name) %></h3>

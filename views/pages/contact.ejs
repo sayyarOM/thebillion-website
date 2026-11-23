@@ -25,7 +25,7 @@
       </form>
     </div>
     <aside class="ccard anim" style="--d:2">
-      <img src="/img/chauffeur-door-sm.webp" alt="" loading="lazy">
+      <img src="<%= base %>/img/chauffeur-door-sm.webp" alt="" loading="lazy">
       <ul>
         <li><%- icon('phone', 18) %><span><% if (isSet(site.phone)) { %><a href="tel:<%= site.phone.replace(/\s/g,'') %>" dir="ltr"><%= site.phone %></a><% } else { %><%= site.phone %><% } %> · <%= t('contact.hours') %></span></li>
         <li><%- icon('mail', 18) %><span><% if (isSet(site.email)) { %><a href="mailto:<%= site.email %>"><%= site.email %></a><% } else { %><%= site.email %><% } %></span></li>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= lang %>" dir="<%= dir %>">
+<html lang="<%= lang %>" dir="<%= dir %>" data-base="<%= base %>">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -7,18 +7,18 @@
   <meta name="description" content="<%= t('meta.description') %>">
   <meta name="theme-color" content="#0F1319">
   <link rel="canonical" href="<%= site.domain %><%= url(pagePath) %>">
-  <link rel="alternate" hreflang="en" href="<%= site.domain %><%= pagePath %>">
-  <link rel="alternate" hreflang="ar" href="<%= site.domain %>/ar<%= pagePath === '/' ? '' : pagePath %>">
+  <link rel="alternate" hreflang="en" href="<%= site.domain %><%= base %><%= pagePath %>">
+  <link rel="alternate" hreflang="ar" href="<%= site.domain %><%= base %>/ar<%= pagePath === '/' ? '' : pagePath %>">
   <meta property="og:title" content="<%= title %>">
   <meta property="og:description" content="<%= t('meta.description') %>">
-  <meta property="og:image" content="<%= site.domain %>/img/sclass-dark.webp">
+  <meta property="og:image" content="<%= site.domain %><%= base %>/img/sclass-dark.webp">
   <meta property="og:type" content="website">
-  <link rel="icon" type="image/svg+xml" href="/brand/tbp-mark-ink.svg">
-  <link rel="apple-touch-icon" href="/brand/tbp-app-icon.svg">
-  <link rel="preload" href="/fonts/<%= lang === 'ar' ? 'ibm-plex-sans-arabic-arabic-400-normal' : 'ibm-plex-sans-latin-400-normal' %>.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/css/fonts.css">
-  <link rel="stylesheet" href="/css/main.css">
-  <% if (typeof preload !== 'undefined') { %><link rel="preload" as="image" href="/img/<%= preload %>.webp"><% } %>
+  <link rel="icon" type="image/svg+xml" href="<%= base %>/brand/tbp-mark-ink.svg">
+  <link rel="apple-touch-icon" href="<%= base %>/brand/tbp-app-icon.svg">
+  <link rel="preload" href="<%= base %>/fonts/<%= lang === 'ar' ? 'ibm-plex-sans-arabic-arabic-400-normal' : 'ibm-plex-sans-latin-400-normal' %>.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="<%= base %>/css/fonts.css">
+  <link rel="stylesheet" href="<%= base %>/css/main.css">
+  <% if (typeof preload !== 'undefined') { %><link rel="preload" as="image" href="<%= base %>/img/<%= preload %>.webp"><% } %>
 </head>
 <body class="page-<%= page.view || 'x' %>">
   <a class="skip" href="#main"><%= t('nav.skip') %></a>

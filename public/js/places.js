@@ -11,6 +11,7 @@
   'use strict';
   const cfgEl = document.getElementById('maps-config');
   if (!cfgEl) return;
+  const BASE = (document.documentElement.dataset.base || '').replace(/\/+$/, ''); // site mounted under a sub-path (BASE_PATH)
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const json = el => { try { return JSON.parse(el.textContent); } catch { return {}; } };
@@ -45,7 +46,7 @@
   let session = '';                     // Google autocomplete billing session: suggestions … one place details
   const newSession = () => (session = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)));
 
-  const api = (path, params) => getJSON(`/api/maps/${path}?` + new URLSearchParams({ lang, ...params }));
+  const api = (path, params) => getJSON(`${BASE}/api/maps/${path}?` + new URLSearchParams({ lang, ...params }));
 
   // Nominatim allows 1 request per second → queue calls
   let nomLast = 0;
@@ -298,16 +299,16 @@
   const loadLeaflet = () => lLoading || (lLoading = new Promise((resolve, reject) => {
     if (window.L?.map) return resolve(window.L);
     const css = document.createElement('link');
-    css.rel = 'stylesheet'; css.href = '/vendor/leaflet/leaflet.min.css';
+    css.rel = 'stylesheet'; css.href = BASE + '/vendor/leaflet/leaflet.min.css';
     document.head.appendChild(css);
     const s = document.createElement('script');
-    s.src = '/vendor/leaflet/leaflet.min.js';
+    s.src = BASE + '/vendor/leaflet/leaflet.min.js';
     s.onload = () => resolve(window.L);
     s.onerror = () => { lLoading = null; reject(new Error('leaflet load failed')); };
     document.head.appendChild(s);
   }));
   const BASEMAPS = [
-    ...(CFG.mapbox ? [{ url: '/api/maps/tiles/{z}/{x}/{y}', tileSize: 512, zoomOffset: -1, maxZoom: 20,
+    ...(CFG.mapbox ? [{ url: BASE + '/api/maps/tiles/{z}/{x}/{y}', tileSize: 512, zoomOffset: -1, maxZoom: 20,
       attribution: '&copy; <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>' }] : []),
     { url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors' }
   ];

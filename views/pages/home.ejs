@@ -3,7 +3,7 @@
 <!-- HERO — cinematic full-bleed image, line-by-line title reveal, frosted-glass booking card -->
 <section class="hero" data-hero>
   <div class="hero__media" aria-hidden="true">
-    <img src="/img/sclass-dark.webp" srcset="/img/sclass-dark-sm.webp 900w, /img/sclass-dark.webp 2200w" sizes="100vw" alt="" fetchpriority="high" data-parallax="0.2">
+    <img src="<%= base %>/img/sclass-dark.webp" srcset="/img/sclass-dark-sm.webp 900w, /img/sclass-dark.webp 2200w" sizes="100vw" alt="" fetchpriority="high" data-parallax="0.2">
   </div>
   <div class="wrap hero__grid">
     <div class="hero__copy">
@@ -79,7 +79,7 @@
     <%- include('../partials/section-head', { eb: t('services.eyebrow'), ttl: t('services.title'), sub: '', action: '' }) %>
     <div class="grid2">
       <a class="scard reveal" href="<%= url('/chauffeur') %>" style="--d:0">
-        <img src="/img/sclass-street.webp" alt="" loading="lazy">
+        <img src="<%= base %>/img/sclass-street.webp" alt="" loading="lazy">
         <div class="scard__body">
           <span class="scard__ic"><%- icon('car', 18) %></span>
           <h3 class="h3"><%= t('services.chauffeur.title') %></h3>
@@ -88,7 +88,7 @@
         </div>
       </a>
       <a class="scard reveal" href="<%= url('/rental') %>" style="--d:1">
-        <img src="/img/mercedes-detail.webp" alt="" loading="lazy">
+        <img src="<%= base %>/img/mercedes-detail.webp" alt="" loading="lazy">
         <div class="scard__body">
           <span class="scard__ic"><%- icon('key-round', 18) %></span>
           <h3 class="h3"><%= t('services.rental.title') %></h3>
@@ -117,7 +117,7 @@
     <div class="exp">
       <% catalog.airportServices.filter(function(s){ return s.img }).reverse().forEach(function(s, i){ %>
         <a class="exp__card reveal" style="--d:<%= i %>" href="<%= url('/airport') %>?add=<%= s.id %>">
-          <img src="/img/<%= s.img %>-sm.webp" alt="" loading="lazy">
+          <img src="<%= base %>/img/<%= s.img %>-sm.webp" alt="" loading="lazy">
           <div><h3><%= L(s.name) %></h3><p><%= L(s.desc) %></p><span class="mono small"><%= t('common.fromPrice') %> OMR <%= s.price %></span></div>
         </a>
       <% }) %>
@@ -139,7 +139,7 @@
 <!-- WHY — clip-path image reveal with parallax -->
 <section class="section why">
   <div class="wrap why__grid">
-    <figure class="why__img clipreveal"><img src="/img/interior.webp" alt="" loading="lazy" data-parallax="0.08"></figure>
+    <figure class="why__img clipreveal"><img src="<%= base %>/img/interior.webp" alt="" loading="lazy" data-parallax="0.08"></figure>
     <div class="why__copy reveal">
       <p class="eyebrow"><%= t('why.eyebrow') %></p>
       <h2 class="h2"><%= t('why.title') %></h2>

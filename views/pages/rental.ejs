@@ -21,7 +21,7 @@
       <% catalog.rentalCars.forEach(function(c, i){ %>
         <label class="car reveal" style="--d:<%= i %>">
           <input type="radio" name="carId" value="<%= c.id %>" form="none" <%= query.car === c.id ? 'checked' : '' %>>
-          <span class="car__img"><img src="/img/<%= c.img %>-sm.webp" alt="<%= c.name %>" loading="lazy"></span>
+          <span class="car__img"><img src="<%= base %>/img/<%= c.img %>-sm.webp" alt="<%= c.name %>" loading="lazy"></span>
           <span class="car__body">
             <span><strong><%= c.name %></strong><span class="muted small"><%= L(c.type) %> · <%= c.year %></span></span>
             <span class="specs"><span><%- icon('users', 14) %><%= c.seats %></span><span><%- icon('briefcase', 14) %><%= c.bags %></span></span>
@@ -53,7 +53,7 @@
         <% }) %>
       </ul>
     </div>
-    <figure class="split__img clipreveal"><img src="/img/range-rover.webp" alt="" loading="lazy" data-parallax="0.08"></figure>
+    <figure class="split__img clipreveal"><img src="<%= base %>/img/range-rover.webp" alt="" loading="lazy" data-parallax="0.08"></figure>
   </div>
 </section>
 

@@ -10,7 +10,7 @@
       </div>
       <div class="footer__grid">
         <div class="footer__brand">
-          <img src="/brand/tbp-logo-white.svg" alt="The Billion" width="150" height="35" loading="lazy">
+          <img src="<%= base %>/brand/tbp-logo-white.svg" alt="The Billion" width="150" height="35" loading="lazy">
           <p><%= t('footer.tagline') %></p>
           <ul class="footer__contact">
             <% if (isSet(site.phone)) { %><li><%- icon('phone', 15) %><a href="tel:<%= site.phone.replace(/\s/g,'') %>" dir="ltr"><%= site.phone %></a></li><% } %>
@@ -37,7 +37,7 @@
           <a href="<%= url('/cancellation') %>"><%= t('footer.cancellation') %></a>
         </div>
       </div>
-      <div class="footer__wordmark" aria-hidden="true"><img src="/brand/tbp-wordmark-white.svg" alt="" loading="lazy"></div>
+      <div class="footer__wordmark" aria-hidden="true"><img src="<%= base %>/brand/tbp-wordmark-white.svg" alt="" loading="lazy"></div>
       <div class="footer__bottom">
         <span>© <%= year %> The Billion. <%= t('footer.rights') %></span>
         <div>
@@ -63,7 +63,7 @@
   }).replace(/</g, '\\u003c') %></script>
   <script type="application/json" id="catalog"><%- JSON.stringify(catalog).replace(/</g, '\\u003c') %></script>
   <script type="application/json" id="maps-config"><%- JSON.stringify({ google: site.mapsGoogle, mapbox: site.mapsMapbox, center: site.mapCenter, regions: site.mapRegions }).replace(/</g, '\\u003c') %></script>
-  <script src="/js/main.js" defer></script>
-  <script src="/js/places.js" defer></script>
+  <script src="<%= base %>/js/main.js" defer></script>
+  <script src="<%= base %>/js/places.js" defer></script>
 </body>
 </html>
